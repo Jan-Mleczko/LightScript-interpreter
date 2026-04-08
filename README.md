@@ -54,7 +54,7 @@ Dla 64-bitowego Windows(R): [LSCRIPT64.EXE, 31K](https://github.com/Jan-Mleczko/
 
 [Analiza VirusTotal](https://www.virustotal.com/gui/file/49b33d969cf4e2d3bd4bb569ed04d31a5cf242f3a33229343acd3df32f7b6f43/detection)
 
-To jest otwartoźródłowe oprogramowanie, więc jeśli masz inny system, boisz się ew. wirusów albo chcesz coś zmienić, możesz pobrać kod źródłówy i skompilować go we własnym zakresie.
+To jest otwartoźródłowe oprogramowanie, więc jeśli masz inny system, boisz się ew. wirusów albo chcesz coś zmienić, możesz pobrać kod źródłowy i skompilować go we własnym zakresie.
 
 
 ### Kompilacja
