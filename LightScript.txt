@@ -1,0 +1,636 @@
+﻿Dokumentacja języka programowania LightScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                              Jan Mleczko, 2026
+Spis treści:
+  1. Wstęp . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ____
+  2. Typy danych . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ____
+  3. Wyrażenia . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ____
+  4. Instrukcje  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ____
+  5. Funkcje i zmienne wbudowane . . . . . . . . . . . . . . . . . . . . . ____
+  6. Łączenie programu z wielu plików  . . . . . . . . . . . . . . . . . . ____
+  7. Uwagi o składni oraz spis wszystkich rodzajów leksemów  . . . . . . . ____
+  8. Podsumowanie różnic względem JavaScript . . . . . . . . . . . . . . . ____
+
+Rozdział 1. Wstęp. ____________________________________________________________
+  Język programowania LightScript jest okrojoną wesją JavaScript. Poza pewnymi
+  wyjątkami każdy prawidłowy kod LightScript jest prawidłowym kodem JavaScript
+  i oznacza w JavaScript to samo. LightScript jest uproszczony względem
+  JavaScript poprzez usunięcie wielu nadmiarowych elementów JavaScript,
+  tzn. takich, których brak da się obejść, chociaż program będzie dłuższy.
+  W pełni zachowane są jednak najbardziej podstawowe cechy JavaScript czyli:
+    - dynamiczne typowanie zmiennych,
+    - możliwość tworzenia dowolnie dużych tablic i dowolnie złożonych struktur
+      wiązanych w dostępnej pamięci bez żadnego ryzyka wycieku pamięci ani
+      uszkodzenia danych przez błędne użycie wskaźników.
+  Wszystkie elementy języka programowania LightScript, które w nim istnieją, są
+  dokładnie opisane w niniejszej dokumentacji. Nie należy zakładać, że jeśli
+  jakaś konstrukcja składniowa może wystąpić w JavaScript to w LightScript
+  również mimo niewspomnienia o niej tutaj.
+
+Rozdział 2. Typy danych. ______________________________________________________
+2.1. Dostępne typy danych.
+  Typy danych w LightScript to:
+    - typ liczbowy (Number),
+    - typ logiczny (Boolean),
+    - typ łańcucha znakowego (String),
+    - typ struktury dynamicznej nazywanej w JavaScript obiektem (Object),
+    - typ "undefined" mający tylko jedną wartość o takiej właśnie nazwie.
+  Inaczej niż w JavaScript, nie istnieje Array ani wartości null i NaN.
+  Do realizacji tablic można i trzeba wykorzystać Object.
+
+2.2. Typ liczbowy.
+  Wartości liczbowe reprezentowalne bezpośrednio w LightScript jako wartości
+  typu Number to liczby całkowite z przedziału
+                         od -2 147 483 647 (włącznie; nie ...648)
+                         do +2 147 483 647 (włącznie).
+  Dzielenie odbywa się z zakrągleniem w dół w stronę zera.
+
+2.2.1. Literał liczbowy.
+  Literał liczbowy jest dowolnie długim ciągiem cyfr dziesiętnych. Jeśli
+  wszystkie te cyfry są zerami, literał reprezentuje wartość 0. Inaczej
+  początkowe zera są odrzucane, a pozostałe cyfry tworzą zapis dziesiętny
+  reprezentowanej wartości. Literał liczbowy określa zawsze liczbę dodatnią
+  albo zero. Liczby ujemne mogą powstać dopiero w drodze wykonywania działań
+  arytmetycznych. Literał, który reprezentowałby liczbę z poza zakresu
+  wyznaczonego w rozdz. 2.2 jest błędem.
+
+2.3. Typ logiczny.
+  Wartość typu logicznego określa, czy prawdziwe jest jakieś zdanie
+  oznajmujące. Możliwe wartości są dwie - zdanie prawdziwe i zdanie fałszywe,
+  zwane krócej prawdą i fałszem.
+
+2.3.1. Literał logiczny.
+  Literałami logicznymi są słowa "true" i "false" pisane bez cudzysłowów. Słowo
+  "true" oznacza prawdę, a "false" - fałsz.
+
+2.4. Typ łańcucha znakowego.
+  Łańcuch znakowy przechowuje dowolny, także pusty ciąg co najwyżej 65 535
+  znaków ASCII, zarówno drukowalnych jak i sterujących. Jest więc 128 różnych
+  znaków o kodach od 0 do 127. W szczególności łańcuch może zawierać znak
+  o zerowym kodzie w dowolnym miejscu, w przeciwieństwie do tradycyjnego
+  w języku programowania C formatu łańcuchów, gdzie jest to kod końca łańcucha.
+
+2.4.1. Literał łańcuchowy.
+  Literał łańcuchowy zaczyna się cudzysłowem albo apostrofem i kończy tym samym
+  z tych dwóch znaków, którym się zaczął. Między cudzysłowami albo apostrofami
+  mogą znajdować się tylko znaki drukowalne ASCII, ale nie zawsze są traktowane
+  dosłownie. Znak ukośnika "\" może mieć specjalne znaczenie, jeśli znaki
+  następujące zaraz po nim to:
+    - mała litera "n" - cały kod "\n" jest zamieniany na znak LF,
+    - mała litera "t" - cały kod "\t" jest zamieniany na znak HT,
+    - cudzysłów lub apostrof - ukośnik jest odrzucany, a odpowiedni cudzysłów
+      lub apostrof zapisywany jest w łańcuchu i w takim kontekście nigdy nie
+      oznacza zakończenia literału,
+    - cyfra 0 lub 1, a potem dwie cyfry od 0 do 7 - wszystkie te trzy cyfry
+      w kolejności zapisu tworzą liczbę w notacji ósemkowej wskazującą kod
+      jednego znaku reprezentowanego przez taką sekwencję.
+
+2.5. Typ struktury dynamicznej.
+  Struktura dynamiczna w LightScript to zbiór par klucz-wartość, w których
+  kluczem jest dowolny łańcuch znaków, który mógłby być wartością typu
+  łańcuchowego, natomiast wartością wartość dowolnego typu. Co istotne, każda
+  wartość tego typu jest tylko wskazaniem na strukturę dynamiczną. Zatem
+  przypisanie nie jest tożsame ze skopiowaniem całej struktury, a żeby dwie
+  wartości tego typu były traktowane jako równe przy porównaniu, muszą
+  wskazywać na tę samą strukturę - nie wystarczy, by zawartość wskazywanych
+  struktur dynamicznych była taka sama.
+
+  Nie istnieją literały typu struktury dynamicznej.
+
+2.6. Typ "undefined".
+  Specjalna wartość "undefined" sprawuje rolę wartości zastępczej w różnych
+  sytuacjach, gdy odwołujemy się do wartości, której wcześniejszego ustalenia
+  zabrakło. Wszystkie te sytuacje zostaną opisane w dalszym ciągu dokumentacji.
+  Nie należy ona do żadnego innego typu - stanowi oddzielny typ o tylko jednej
+  możliwej wartości.
+
+  W przeciwieństwie do JavaScript nie istnieją inne wartości specjalne,
+  tzn. "null" i "NaN", a jedynie "undefined".
+
+2.6.1. Literał typu "undefined".
+  Wartość "undefined" może także zostać wprowadzona gdzieś celowo za pomocą
+  literału. Słowo "undefined" jest literałem reprezentującym tę wartość.
+
+2.7. Zasady rzutowania typów.
+  Są sytuacje, w których zasadniczo oczekiwany jest pewien typ. Ponieważ
+  LightScript jest dynamicznie typowanym językiem programowania, wystąpienie
+  danej typu innego niż oczekiwany nie jest błędem, a zamiast tego wartość
+  poddawana jest czynności   r z u t o w a n i a   na oczekiwany typ. Przy
+  rzutowaniu zawsze znany jest z góry typ docelowy i typem wyniku rzutowania
+  zawsze będzie ten typ docelowy.
+
+2.7.1. Rzutowanie na typ liczbowy.
+2.7.1.1. Rzutowanie wartości logicznej na typ liczbowy.
+  Jeśli wartością wejściową była prawda, wynikiem rzutowania jest liczba 1, a
+  jeśli wartością wejściową był fałsz, wynikiem jest liczba zero.
+
+2.7.1.2. Rzutowanie łańcucha znakowego na typ liczbowy.
+  Uwzględniany jest tylko ciąg cyfr na początku treści łańcucha. Dla łańcucha,
+  który jest pusty lub nie zaczyna się od cyfry wynikiem rzutowania jest zawsze
+  liczba zero. W przeciwnym razie ów ciąg cyfr traktowany jest jako zapis
+  dziesiętny liczby naturalnej i ta liczba jest wynikiem. W przypadku
+  przekroczenia przez tę liczbę najwyższej dozwolonej wartości typu liczbowego
+  wynikiem jest najwyższa możliwa wartość liczbowa.
+
+2.7.1.3. Rzutowanie wskazania na strukturę dynamiczną na typ liczbowy.
+  Wynik rzutowania wskazania na każdą strukturę dynamiczną wynosi 1.
+
+2.7.1.4. Rzutowanie wartości "undefined" na typ liczbowy.
+  Wynikiem rzutowania jest liczba zero.
+
+2.7.2. Rzutowanie na typ logiczny.
+  Dla każdego typu innego niż logiczny opisany zostanie tutaj warunek, jaki
+  musi spełnić wartość, aby wynikiem była prawda. W razie niespełnienia warunku
+  odpowiedniego dla typu wejścia wynikiem jest fałsz.
+
+2.7.2.1. Rzutowanie wartości liczbowej na typ logiczny.
+  Prawda, jeśli liczba jest różna od zera.
+
+2.7.2.2. Rzutowanie łańcucha znakowego na typ logiczny.
+  Prawda, jeśli łańcuch nie jest pusty.
+
+2.7.2.3. Rzutowanie wskazania na strukturę dynamiczną na typ logiczny.
+  Zawsze prawda.
+
+2.7.2.4. Rzutowanie wartości "undefined" na typ logiczny.
+  Nigdy prawda, zawsze fałsz.
+
+2.7.3. Rzutowanie na typ łańcucha znakowego.
+2.7.3.1. Rzutowanie wartości liczbowej na typ łańcucha znakowego.
+  Wynikiem jest łańcuch o zawartości stanowiącej najkrótszy literał
+  reprezentujący bezpośrednio wartość wejściową. Gdy wartość wejściowa jest
+  liczbą ujemną, dla której to nie ma takiego literału, łańcuch wynikowy składa
+  się ze znaku "-" oraz najkrótszego literału reprezentującego bezpośrednio
+  liczbę przeciwną do wartości wejściowej.
+
+2.7.3.2. Rzutowanie wartości logicznej na typ łańcucha znakowego.
+  Dla prawdy wynikiem jest łańcuch znaków "true" bez cudzysłowów, a dla fałszu
+  jest nim łańcuch "false" bez cudzysłowów.
+
+2.7.3.3. Rzutowanie wskazania struktury dynamicznej na typ łańcucha znakowego.
+  Wynikiem jest łańcuch znaków o zawartości "[object Object]" bez cudzysłowów.
+
+2.7.3.4. Rzutowanie wartości "undefined" na typ łańcucha znakowego.
+  Wynikiem jest łańcuch znaków o zawartości "undefined" bez cudzysłowów.
+
+2.7.4. Rzutowanie a pozostałe typy.
+  Potrzeba rzutowania na typ struktury dynamicznej ani na typ "undefined" nie
+  występuje, a więc zasady takowego nie są podane.
+
+Rozdział 3. Wyrażenia. ________________________________________________________
+  Ważnym elementem języka programowania LightScript są   w y r a ż e n i a
+  będące częścią wielu instrukcji. Podstawowymi składnikami wyrażenia są
+  literały różnych typów opisane w rozdziałach 2.2.1, 2.3.1, 2.4.1 i 2.6.1 oraz
+  nazwy zmiennych. Każde podwyrażenie ma wartość, a ponadto może być
+  tzw.   L - w y r a ż e n i e m,   czyli wartością z określeniem miejsca
+  pochodzenia, w które to miejsce można też wpisać nową wartość. Nazwa zmiennej
+  jest L-wyrażeniem, a literały nimi nie są. Podwyrażenia mogą razem
+  z   o p e r a t o r a m i   tworzyć większe podwyrażenia. To, czy takie
+  większe podwyrażenie jest L-wartością, zależy od operatora i czasami także od
+  wartości mu towarzyszących.
+
+3.1. Operatory.
+3.1.1. Operator dodawania i sklejania "+".
+  Wyrażenie z tym operatorem ma postać A + B, gdzie A oraz B są podwyrażeniami,
+  których wartości stanowią   a r g u m e n t y   operatora. Jeśli oba
+  argumenty są typu liczbowego lub logicznego, są rzutowane na typ liczbowy,
+  a otrzymane liczby - dodawane. Wartością wyrażenia jest ich suma, a jeśli
+  leżałaby ona poza zakresem typu liczbowego (ustalonym w rozdz. 2.2) to próba
+  takiego dodawania jest błędem.
+
+  W jakimkolwiek innym przypadku oba argumenty są rzutowane na typ łańcucha
+  znakowego. Wartością wyrażenia jest łańcuch znaków powstały z "doklejenia"
+  prawego argumentu na koniec lewego, a przynajmniej jego pierwsze 65 535
+  znaków, gdyby w całości miałby on ich więcej.
+
+  Podwyrażenie z tym operatorem nie jest L-wartością.
+
+3.1.2. Operator odejmowania "-".
+  Wyrażenie z tym operatorem ma postać A - B. Operator działa podobnie jak
+  operator dodawania z taką różnicą, że argumenty są zawsze rzutowane na typ
+  liczbowy, a zamiast dodawania wykonywane jest odejmowanie.
+
+3.1.3. Operator mnożenia "*".
+  Tak jak dla operatorów dodawania i odejmowania, ale realizowanym działaniem
+  jest mnożenie.
+
+3.1.4. Operator dzielenia "/".
+  Tak jak dla powyżej opisanych operatorów, ale realizowanym działaniem na 
+  liczbach jest dzielenie. Dodatkowe reguły dzielenia znajdują się w rozdziale
+  2.2 na temat typu liczbowego. Próba dzielenia przez zero to błąd.
+
+3.1.5. Operator nawiasowy.
+  Operator ma postać (W), gdzie W jest wyrażeniem. Nawiasy służą do
+  wymuszania obliczenia zawartego w nich wyrażenia niezależnie od wyrażenia
+  otaczającego. Wartością operatora nawiasowego jest wartość wewnętrznego
+  wyrażenia. Jeśli była ona L-wartością, zachowuje ten status.
+
+3.1.6. Operator indeksowania.
+  Wyrażenie z tym operatorem ma postać A[B], gdzie A oraz B są podwyrażeniami.
+  Są dwa oddzielne przypadki wyznaczania wartości takiego podwyrażenia.
+
+3.1.6.1. Dostęp do pola struktury dynamicznej.
+  Przypadek ma miejsce tylko wtedy, gdy wartość A jest wskazaniem na strukturę
+  dynamiczną. Wartość B podlega wtedy rzutowaniu na łańcuch znaków. Wynikem
+  jest L-wartość związana z wartością w strukturze dynamicznej z pary
+  klucz-wartość o kluczu B. Jeśli taka para nie istniała w danej strukturze
+  dynamicznej, zakłada się, że miała wcześniej wartość "undefined".
+
+3.1.6.2. Indeksowanie znaku w łańcuchu znaków.
+  Ten przypadek występuje, gdy nie są spełnione warunki przypadku 3.1.6.1.
+  Wartość A rzutowana jest na łańcuch znaków, natomiast wartość B na liczbę.
+  Jeśli liczba B jest ujemna albo większa lub równa długości łańcucha A,
+  wartością podwyrażenia jest wartość "undefined". Inaczej w wyniku otrzymamy
+  pierwszy znak z łańcucha A po pominięciu tylu znaków z początku, ile wynosi
+  wartość B w formie jednoznakowego łańcucha znaków. Nie jest to L-wartość.
+
+3.1.7. Operator wywołania funkcji.
+  Podwyrażenie z tym operatorem ma postać A(B), gdzie A jest nazwą jednej
+  ze zdefiniowanych tzw. funkcji, natomiast w miejscu B albo nie ma nic albo
+  występuje lista wyrażeń rozdzielanych przecinkami. W ramach obliczania
+  takiego podwyrażenia następuje tzw. wywołanie tej funkcji, a jego wartością
+  staje się jej tzw. wartość zwracana. Funkcje opisano szerzej w rozdz. 4.6.
+
+3.1.8. Operator równości "==".
+  Podwyrażenie z tym operatorem ma postać A == B. Celem operatora jest
+  sprawdzenie, czy dwie wartości są równe. A i B są wyrażeniami, a wynikiem
+  jest zawsze wartość logiczna. Jeśli wartości A i B są tego samego typu, są
+  porównywane wg rozdz. 3.1.10 o porównaniach. W przeciwnym razie, gdy
+  typy są różne, stosuje się najpierw poniższe zasady rzutowania przy
+  porównaniu sprawiające, że albo otrzymujemy dwie wartości tego samego typu
+  do porównania albo poznajemy wynik porównania juz na tym etapie. Podwyrażenie
+  z tym operatorem nie jest L-wartością.
+
+3.1.9. Rzutowanie typów do porównania.
+  Odpowiednie rzutowania zależą od tego, jakie są dwa typy porównywanych
+  wartości. Nie ma znaczenia, która z nich była zapisana w wyrażeniu jako
+  pierwsza, chociaż kolejność jest zachowywana i może być ważna po rzutowaniach
+  w przypadku niektórych operatorów porównań. Opisane zostaną reguły dla
+  każdego wariantu dwóch różnych typów.
+
+3.1.9.1. Liczba i łańcuch znaków.
+  Łańcuch znaków rzutowany jest na liczbę, po czym obie wartości są typu
+  liczbowego.
+
+3.1.9.2. Liczba i wartość logiczna.
+  Wartość logiczna rzutowana jest na liczbę, po czym obie wartości są typu
+  liczbowego.
+
+3.1.9.3. Liczba i wskazanie na strukturę dynamiczną.
+  Liczba zawsze jest różna od wskazania na strukturę dynamiczną, ale nie jest
+  od niego ani mniejsza, ani większa.
+
+3.1.9.4. Liczba i wartość "undefined".
+  Wartość "undefined" jest zawsze różna od liczby, ale nie jest od niej ani
+  mniejsza, ani większa.
+
+3.1.9.5. Łańcuch znaków i wartość logiczna.
+  Łańcuch znaków jest rzutowany najpierw na liczbę, a potem na wartość
+  logiczną.
+
+3.1.9.6. Łańcuch znaków i wskazanie na strukturę dynamiczną.
+  Wskazanie struktury dynamicznej rzutowane jest na łańcuch.
+
+3.1.9.7. Łańcuch znaków i wartość "undefined".
+  Wartość "undefined" jest różna od każdego łańcucha znaków, ale nie jest
+  od niego ani mniejsza, ani większa.
+
+3.1.9.8. Wartość logiczna i wskazanie struktury dynamicznej.
+  Każde wskazanie struktury dynamicznej jest różne od wartości logicznej, ale
+  nie od niej ani mniejsze, ani większe.
+
+3.1.9.9. Wartość logiczna i wartość "undefined".
+  Wartość "undefined" jest różna od wartości logicznej, ale nie jest od niej
+  ani mniejsza, ani większa.
+
+3.1.9.10. Wskazanie na strukturę dynamiczną i wartość "undefined".
+  Wskazanie struktury dynamicznej jest różne od wartości "undefined", ale nie jest
+  od niej ani mniejsze, ani większe.
+
+3.1.10. Porównywanie wartości poszczególnych typów.
+  Podrozdział omawia porównanie wartości każdego z typów z drugą wartością tego
+  samego typu.
+
+3.1.10.1. Dwie liczby.
+  Porównywanie dwóch liczb całkowitych jest działaniem oczywistym.
+
+3.1.10.2. Dwa łańcuchy znaków.
+  Rozpoczynamy porównując pierwszy znak pierwszego łańcucha z pierwszym znakiem
+  drugiego łańcucha. Jeśli kod ASCII któregoś z tych znaków jest większy, cały
+  łańcuch też jest większy. W przypadku równych kodów porównujemy drugie znaki
+  łańcuchów, trzecie znaki itd. Dojście tak do końca obu łańcuchów oznacza,
+  że są one równe. Gdy jeden z łańcuchów jest krótszy i nie można brać już
+  z niego kolejnych znaków, a drugi jeszcze się nie skończył, porównanie się
+  kończy i dłuższy łańcuch jest większy. Mimo to jest możliwe, żeby krótszy
+  łańcuch był większy od dłuższego. Jest tak, gdy przed dojściem do końca
+  krótszego łańcucha napotkany zostanie znak o wyższym kodzie niż równoległy
+  znak z początku dłuższego łańcucha.
+
+3.1.10.3. Dwie wartości logiczne.
+  Wartość "false" jest mniejsza od "true".
+
+3.1.10.4. Dwa wskazania struktur dynamicznych.
+  Wskazania struktur dynamicznych są równe, gdy wskazują tę samą strukturę.
+  Nigdy nie są od siebie mniejsze ani większe.
+
+3.1.10.5. Dwie wartości "undefined".
+  Dwie wartości "undefined" są równe.
+
+3.1.11. Operator mniejszości "<".
+  Podwyrażenie z tym operatorem ma postać A < B, gdzie A i B są wyrażeniami.
+  Wynikiem jest wartość logiczna określająca, czy wartość A jest mniejsza niż
+  wartość B w porównaniu wg rozdz. 3.1.9 i 3.1.10. Wynik nie jest L-wartością.
+
+3.1.12. Operator większości ">".
+  Podwyrażenie z tym operatorem ma postać A > B, gdzie A i B są wyrażeniami.
+  Wynikiem jest wartość logiczna określająca, czy wartość A jest mniejsza niż
+  wartość B w porównaniu wg rozdz. 3.1.9 i 3.1.10. Wynik nie jest L-wartością.
+
+3.2. Tworzenie struktur dynamicznych w wyrażeniu.
+  Jako podwyrażenie może wystąpić zapis "new Object ()" bez cudzysłowów.
+  Powoduje on utworzenie nowej, pustej struktury dynamicznej, do której
+  wskazanie stanowi wartość takiego podwyrażenia. Nie jest ono L-wartością.
+
+3.3. Priorytet operatorów.
+  W wyrażeniach języka programowania LightScript operatory mogą mieć różny
+  priorytet. Wszystkie operatory dzielą się na następujące klasy od najwyższego
+  do najniższego priorytetu:
+    - operator nawiasowy, indeksowania i wywołania funkcji,
+    - operatory mnożenia i dzielenia,
+    - operatory dodawania i odejmowania,
+    - operatory równości, mniejszości i większości.
+
+Rozdział 4. Instrukcje. _______________________________________________________
+  Program w LightScript jest ciągiem instrukcji. Każda instrukcja nakazuje
+  pewną szczególną czynność związaną z przetwarzaniem danych. Wykonać program
+  to wykonać wszystkie instrukcje zgodnie z ich kolejnością.
+
+4.1. Instrukcja wyrażeniowa.
+  Instrukcja wyrażeniowa składa się z dowolnego wyrażenia oraz średnika ";".
+  Wykonanie jej polega na obliczeniu wartości wyrażenia i odrzuceniu jej.
+  Praktycznym zastosowanie tej instrukcji jest wywoływanie funkcji.
+
+  Przykład:
+    abcd (efg (i), j + k);
+
+4.2. Instrukcja przypisania.
+  Składa się ona z wyrażenia, pojedynczego znaku równości "=", drugiego
+  wyrażenia oraz średnika ";". Oba wyrażenia są obliczane w nieokreślonej
+  kolejności. Wartość lewego wyrażenia względem znaku równości musi być
+  L-wartością - inaczej taka instrukcja jest błędem. Otrzymana wartość prawego
+  wyrażenia jest zapisywana w miejscu wyznaczonym przez lewe wyrażenie.
+
+  Przykład:
+    ab[c * 60 + d] = 23;
+
+4.3. Instrukcja warunkowa.
+  Ma postać "if (W) {I}" bez cudzysłowów, gdzie W jest wyrażeniem, natomiast I
+  jest ciągiem instrukcji, który może być pusty. Wyrażenie W jest obliczane,
+  a jego wynik rzutowany na typ wartości logicznej. Jeżeli otrzymana wartość
+  to "true", wykonywany jest ciąg instrukcji I.
+
+  Przykład:
+    if (a > b) {  tymcz = a;  a = b;  b = tymcz;  }
+
+4.4. Instrukcja pętli.
+  Ma składnię "while (W) {I}" bez cudzysłowów, gdzie W jest wyrażeniem,
+  natomiast I - ciągiem instrukcji. Obliczana jest wartość wyrażenia W i dopóki
+  po rzutowaniu na typ logiczny daje ona wartość "true", powtarzane jest
+  wykonywanie ciągu instrukcji I. Po każdym wykonaniu I wartość W jest ponownie
+  obliczana i sprawdzana.
+
+  Przykład:
+    while (pwk * pwk < a) {  pwk = pwk + 1;  }
+
+4.5. Instrukcja definicji zmiennej.
+  Postać instrukcji definicji zmiennej to "var N;" bez cudzysłowów, gdzie N
+  jest nazwą zmiennej, a zamiast słowa "var" może występować słowo "let". Nazwa
+  zmiennej musi być ciągiem od 1 do 31 znaków, z których każdy musi być literą,
+  cyfrą albo podkreślnikiem "_". Pierwszy znak nazwy nie może być cyfrą.
+  W ramach realizacji takiej instrukcji tworzona jest zmienna o określonej
+  nazwie. Jeśli instrukcja wystąpiła wewnątrz definicji funkcji - a o funkcjach
+  będzie mowa poniżej - utworzona zmienna jest zmieną lokalną funkcji. Inaczej
+  jest zmienną globalną całego skryptu. Wartość początkowa nowej zmiennej to
+  "undefined". Jeżeli istniała już zmienna o nazwie N, nic się nie dzieje.
+  Stara wartość tej zmiennej pozostaje nienaruszona.
+
+4.6. Instrukcja definicji funkcji.
+  Funkcje to podprogramy w języku programowania LightScript.
+
+  Pisana jest jako "function N (PF) {I}" bez cudzysłowów, gdzie N jest nazwą
+  objętą takimi ograniczeniami jak nazwy zmiennych, PF jest listą nazw
+  zmiennych rozdzielanych przecinkami, natomiast I jest ciągiem instrukcji.
+  Wewnątrz ciągu instrukcji I zabronione są zagnieżdżone instrukcje definicji
+  funkcji. Instrukcja powoduje utworzenie nowej funkcji o nazwie N z ciałem
+  będącym ciągiem instrukcji I. Mogą istnieć zmienna globalna i funkcja
+  o takiej samej nazwie. Lista nazw parametrów formalnych PF pozwala nazwać
+  wartości przekazywane przy wywołaniu funkcji. Dane te staną się z chwilą
+  wywołania wartościami zmiennych lokalnych o takich nazwach, jakie były
+  wymienione na liście. Funkcja może mieć do 8 parametrów formalnych.
+
+4.7. Instrukcja zwrócenia wartości z funkcji.
+  Jej składnia to "return W;" bez cudzysłowów, gdzie W jest wyrażeniem.
+  Nakazuje obliczenie wyrażenia W oraz zakończenie wykonywania ciała funkcji.
+  Wartość wyrażenia W staje się wartością zwracaną funkcji. Instrukcja ta nie
+  może występować poza funkcją. Dojście do końca funkcji bez wykonywania
+  instrukcji zwrócenia wartości powoduje przyjęcie wartości "undefined" jako
+  wartości zwracanej.
+
+  Przykład instr. definicji funkcji i instr. zwrócenia wartości z funkcji:
+    function kwadrat (liczba) {  return liczba * liczba;  }
+
+Rozdział 5. Funkcje i zmienne wbudowane. ______________________________________
+  Uzupełnieniem języka programowania LightScript są funkcje wbudowane, czyli
+  funkcje, które istnieją od początku działania każdego skryptu i nie zostały
+  zdefiniowane instrukcją definicji funkcji. Korzystanie z nich wygląda jednak
+  tak samo, jako korzystanie z własnych funkcji zdefiniowanych w skrypcie.
+
+5.1. Funkcja write.
+  Rzutuje jedyny parametr na typ łańcucha znakowego i wyprowadza na standardowe
+  wyjście interpretatora LightScript znaki uzyskanego łańcucha. Znak LF
+  z łańcucha jest zawsze zamieniany na właściwą dla systemu sekwencję
+  powodującą przejście do nowego wiersza.
+
+5.2. Funkcja writeln.
+  Tak jak write, ale po wyprowadzeniu łańcucha przechodzi do nowego wiersza.
+
+5.3. Funkcja readln.
+  Wprowadza wiersz tekstu z wejścia standardowego interpretatora zapisując go
+  jako łańcuch znakowy bez znaku nowego wiersza. W przypadku wiersza dłuższego
+  niż 65 535 znaków końcowe nadmiarowe znaki są odrzucane. Zwraca tak uzyskany
+  łańcuch znaków albo pusty łańcuch w razie niemożności odczytu z wejścia
+  standardowego.
+
+5.4. Funkcja String_length.
+  Służy do określania długości łańcuchów znaków. Rzutuje swój pierwszy parametr
+  formalny na typ łańcucha znakowego i zwraca liczbę - jego długość.
+
+5.5. Funkcja String_charCodeAt.
+  Oczekuje dwóch parametrów - łańcucha znaków i liczby. Jeżeli liczba jest
+  ujemna bądź większa lub równa długości łańcucha znaków, funkcja zwraca
+  wartość liczbową 0. Inaczej zwraca ona liczbę od 0 do 127 będącą kodem znaku
+  łańcucha - pierwszego parametru leżącego na miejscu wskazanym przez drugi
+  parametr od początku łańcucha licząc od zera.
+
+5.6. Funkcja String_fromCharCode.
+  Konstruuje łańcuch znakowy złożony z jednego znaku o kodzie określonym
+  pierwszym parametrem typu liczbowego i zwraca taki łańcuch. Otrzymawszy jako
+  parametr liczbę z poza zakresu kodów znaków, tzn. ujemną lub większą niż 127,
+  zwraca pusty łąńcuch znaków.
+
+5.7. Wbudowana zmienna o nazwie "window".
+  Oprócz funkcji wbudowanych jest też jedna wbudowana zmienna. Ma ona nazwę
+  "window" bez cudzysłowów, a jej początkową wartością jest wskazanie na
+  strukturę dynamiczną. Owa struktura ma pole LIGHTSCRIPT_VER o wartości
+  liczbowej równej 1. Zmienna ta nie jest w żaden sposób wyróżniona i może być
+  zmieniana tak jak zmienne zdefiniowane w skrypcie.
+
+  Obecność tej zmiennej umożliwia wykrywanie, czy skrypt jest wykonywany przez
+  interpretator LightScript, czy przez interpretator JavaScript w przeglądarce
+  WWW.
+
+Rozdział 6. Łączenie programu z wielu plików. _________________________________
+  W samym języku LightScript nie ma instrukcji sięgania do zewnętrznych plików
+  z kodem, ale interpretator LightScript powinien umożliwiać uruchamianie
+  programów zapisanych w kilku plikach. Interpretatorowi powinno dać się
+  wskazać zestaw plików kodu LightScript w określonej kolejności. Sposób
+  postępowania z wieloplikowym programem jest następujący. Wykonywany jest kod
+  z pierwszego pliku, a następnie z kolejnych, jednakże stan zmiennych oraz
+  istniejące funkcje pozostają takie jakie były na końcu działania kodu
+  z poprzedniego pliku.
+
+  Odpowiada to umieszczaniu w dokumencie HTML serii znaczników <SCRIPT>
+  załączających skrypty zewnętrzne JavaScript. Dla przykładu załóżmy, że mamy
+  interpretator LightScript wywoływany z wiersza polecenia poleceniem LS
+  z nazwami plików skryptu jako parametrami we właściwej kolejnosci. Wtedy
+  wydanie polecenia:
+
+    LS AAA.JS BBB.JS CCC.JS
+
+  będzie odpowiadało takiemu zapisowi w HTML dla przeglądarki:
+
+    <SCRIPT SRC="aaa.js"></SCRIPT>
+    <SCRIPT SRC="bbb.js"></SCRIPT>
+    <SCRIPT SRC="ccc.js"></SCRIPT>
+
+  Pliki w przykładzie mają rozszerzenie JS, ale zakładamy, że są one zgodne
+  jednocześnie z LightScript i z JavaScript.
+
+Rozdział 7. Uwagi o składni oraz spis wszystkich rodzajów leksemów. ___________
+  Kod LightScript składa się z   l e k s e m ó w,   czyli pewnych jednostek,
+  z których składają się wszystkie instrukcje. Podstawą czytania kodu jest
+  określenie zapisu leksemów jako tekstu zawarte w tym rodziale. Zamieszczony
+  zostanie tutaj także spis wszystkich leksemów, jakie mogą wystąpić.
+
+7.1. Odstępy między leksemami.
+  Między zapisami leksemów mogą występować odstępy, czyli znaki nienależące
+  do żadnego leksemu. Forma odstępu nie ma znaczenia włącznie z tym, że czasami
+  odstępu może w ogóle nie być. Wyjątkiem są sytuacje, gdzie konieczne jest
+  rozdzielenie leksemów odstępem, ponieważ w przeciwnym razie dwa leksemy
+  mogłyby zostać uznane za jeden niezamierzony leksem.
+
+  Odstęp składa się ze znaków odstępu, tj. spacji, znaków tabulacji HT oraz
+  podziałów wiersza.
+
+  Uwaga! Odstęp może wystąpić wewnątrz leksemu - nie wymusza on podziału
+  leksemu niezależnie od kontekstu. Zasady zapisu niektórych rodzajów leksemów
+  mogą pozwalać wewnątrz leksemu na sekwencję, która mogłaby też być odstępem
+  międzyleksemowym.
+
+7.1.2. Komentarze.
+  Składnia LightScript umożliwia przerywanie kodu   k o m e n t a r z a m i,
+  czyli odpowiednio oznaczonymi fragmentami tekstu, których treść pozbawiona
+  jest znaczenia dla interpretatora. Praktycznym zastosowaniem komentarzy jest
+  głównie dopisywanie objaśnień na temat działania programu. Znaczniki początku
+  i końca komentarza to odpowiednio "/*" i "*/" bez cudzysłowów. Komentarz
+  stanowi część odstępu w sensie rozdz. 7.1 i może zostać zapisany tam, gdzie
+  jest miejsce na odstęp.
+
+7.2. Spis wszystkich rodzajów leksemów.
+  W poniższej tabeli opisano wszystkie leksemy, które mogą tworzyć program
+  w języku LightScript w połączeniu z odstępami. Część z nich niesie ze sobą
+  informacje zależnie od szczególnego zapisu, a inne mają tylko jeden
+  prawidłowy zapis.
+
+  Przykład zapisu    Opis
+  var                Słowo kluczowe var. Jest elementem instrukcji definicji
+                     zmiennej. Może też być zapisane jako "let" bez
+                     cudzysłowów, co jednak (w LightScript) nie zmienia jego
+                     znaczenia.
+  if                 Słowo kluczowe if. Bierze udział w tworzeniu instrukcji
+                     warunkowej.
+  while              Słowo kluczowe while. Jest potrzebne do zapisu instrukcji
+                     pętli.
+  function           Słowo kluczowe function będące częścią zapisu instrukcji
+                     definicji funkcji.
+  return             Słowo kluczowe return. Jest elementem instrukcji zwrócenia
+                     wartości z funkcji.
+  true               Słowo kluczowe true, jednocześnie literał typu logicznego.
+  false              Słowo kluczowe false, jednocześnie literał typu
+                     logicznego.
+  undefined          Słowo kluczowe undefined, jednocześnie literał typu
+                     "undefined".
+  _123Abc            Nazwa niebędąca słowem kluczowym mogąca być nazwą zmiennej
+                     lub funkcji. Ograniczenia budowy nazw opisano powyżej
+                     w rozdz. 4.5 o instrukcji definicji zmiennych. Leksem tego
+                     rodzaju może być częścią konstrukcji "new Object ()".
+  0000000000001234   Literał liczbowy zgodnie z rozdz. 2.2.1.
+  'A\' = X\\A'       Literał typu łańcucha znakowego zgodnie z rozdz. 2.4.1.
+  {                  Klamra otwierająca występująca w instrukcji warunkowej,
+                     pętli oraz definicji funkcji.
+  }                  Klamra zamykająca występująca w tych instrukcjach,
+                     co otwierająca.
+  =                  Pojedynczy znak równości pojawiający się w instrukcji
+                     przypisania.
+  +                  Operator dodawania i sklejania w wyrażeniach
+                     - zobacz rozdział 3.
+  -                  Operator odejmowania w wyrażeniach.
+  *                  Operator mnożenia w wyrażeniach.
+  /                  Operator dzielenia w wyrażeniach.
+  <                  Operator mniejszości w wyrażeniach.
+  ==                 Operator równości w wyrażeniach.
+  >                  Operator większości w wyrażeniach.
+  (                  Nawias otwierający w wyrażeniach oraz w zapisie instrukcji
+                     warunkowej, instrukcji pętli i instrukcji definicji
+                     funkcji.
+  )                  Nawias zamykający w wyrażeniach oraz w zapisie instrukcji
+                     warunkowej, instrukcji pętli i instrukcji definicji
+                     funkcji.
+  [                  Otwierający nawias kwadratowy tworzący operator
+                     indeksowania w wyrażeniach.
+  ]                  Zamykający nawias kwadratowy tworzący operator
+                     indeksowania w wyrażeniach.
+  ,                  Przecinek rozdzielający parametry w instrukcji definicji
+                     funkcji oraz w operatorze wywołania funkcji.
+  ;                  Średnik zakańczający niektóre instrukcje.
+
+Rozdział 8. Podsumowanie różnic względem JavaScript. __________________________
+  - Wartości liczbowe nie są zmiennoprzecinkowe, a zamiast tego zawsze
+    są liczbami całkowitymi.
+  - Łańcuchy znaków przechowują tylko znaki ASCII, a nie Unicode oraz mają
+    stałe ograniczenie długości.
+  - Jest znacznie mniej operatorów, usunięto m. in. operatory logiczne.
+    Brakujące operatory można zastąpić pisząc odpowiednie funkcje.
+  - Dzielenie przez zero jest błędem zamiast dawać wartość specjalną Infinity
+    (która w LightScript w ogóle nie istnieje).
+  - Uproszczona została sprawa "wartości pustych". Z pośród nich zachowano
+    tylko "undefined".
+  - Nie ma instrukcji "else", "break", "continue", "do" ani "switch".
+  - Instrukcja "return" musi wystąpić z wyrażeniem. Równoważna usuniętej formie
+    "return;" bez wyrażenia jest instrukcja "return undefined;".
+  - Dozwolona jest tylko składnia komentarzy w stylu C, natomiast wycofano
+    komentarze w stylu C++ (czyli "//...do końca wiersza").
+  - Inne jest podejście do funkcji. Funkcja zawsze jest globalna, a jej nazwy
+    nie przesłania zmienna o takiej samej nazwie. Nie ma składni "funkcji
+    anonimowych" wewnątrz wyrażeń. Nie ma takiego typu danych jak wskazanie
+    funkcji - wywoływanie funkcji musi być w pełni statyczne.
+  - Instrukcją podległą pod konstrukcję if lub while musi być instrukcja
+    złożona z nawiasami klamrowymi. Właściwie to porzucona została koncepcja
+    instrukcji prostych i złożonych - nawiasy klamrowe są po prostu częścią
+    składni instrukcji warunkowych i instrukcji pętli, jak również instrukcji
+    definicji funkcji. Poza tymi kontekstami nie można stosować klamr.
+  - Jedną instrukcją "var" można zdefiniować tylko jedną zmienną. Polecenie
+    "var a1, a2, a3;" trzeba zmienić np. na "var a1;  var a2;  var a3;".
+
+  Wyżej wymienione różnice to tylko najważniejsze z wielu innych.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
