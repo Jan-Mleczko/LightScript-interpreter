@@ -2,7 +2,7 @@
 
 Oto mój interpretator dalece uproszczonego JavaScript'u, zachowujący jednakże jego najistotniejsze cechy, czyli dynamiczne typowanie i wspomagane przez interpretator dynamiczne struktury danych. Powstałej w ten sposób odmianie JavaScript nadałem nazwę _LightScript_ i udostępniam również jej dokumentację.
 
-Dokumentacja jest w pliku `LightScript.txt`.
+Dokumentacja jest w pliku [LightScript.txt](https://raw.githubusercontent.com/Jan-Mleczko/LightScript-interpreter/refs/heads/main/LightScript.txt).
 
 **Przykład działającego skryptu:**
 ```js
@@ -46,10 +46,12 @@ Zestaw funkcji wbudowanych to `write`, `writeln`, `readln`, `String_length`, `St
 
 ### Pobierz interpretator
 
-Dla Windows(R) NT: [LSCRIPT.EXE, 26K]()
+Dla Windows(R) NT: [LSCRIPT.EXE, 26K](https://github.com/Jan-Mleczko/LightScript-interpreter/raw/refs/heads/main/LSCRIPT.EXE)
+
 [Analiza VirusTotal](https://www.virustotal.com/gui/file/44033e1ee07533a4d8618d77875a7e0c35563d7ed464954cb499d78ed87e8b17/detection)
 
-Dla 64-bitowego Windows(R): [LSCRIPT64.EXE, 31K]()
+Dla 64-bitowego Windows(R): [LSCRIPT64.EXE, 31K](https://github.com/Jan-Mleczko/LightScript-interpreter/raw/refs/heads/main/LSCRIPT64.EXE)
+
 [Analiza VirusTotal](https://www.virustotal.com/gui/file/49b33d969cf4e2d3bd4bb569ed04d31a5cf242f3a33229343acd3df32f7b6f43/detection)
 
 To jest otwartoźródłowe oprogramowanie, więc jeśli masz inny system, boisz się ew. wirusów albo chcesz coś zmienić, możesz pobrać kod źródłówy i skompilować go we własnym zakresie.
